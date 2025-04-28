@@ -64,7 +64,7 @@ if ( ! isset( $answers ) || ! is_array( $answers ) ) {
       </div>
     </div>
 
-    <!-- Dynamic Quiz Questions (Steps 1…N) -->
+    <!-- Steps 1…N: Questions -->
     <?php foreach ( $questions as $i => $q ) : ?>
       <div class="csq-step">
         <div class="csq-question-card">
@@ -105,7 +105,7 @@ if ( ! isset( $answers ) || ! is_array( $answers ) ) {
       </div>
     <?php endforeach; ?>
 
-    <!-- Results Step -->
+    <!-- Step N+1: Results -->
     <div class="csq-step">
       <div class="csq-results-container">
         <div class="csq-loading-state">
@@ -126,7 +126,7 @@ if ( ! isset( $answers ) || ! is_array( $answers ) ) {
 
   <!-- Navigation -->
   <div class="csq-quiz-controls">
-    <button class="csq-nav-btn csq-prev-btn" disabled>← Back</button>
+    <button class="csq-nav-btn csq-prev-btn">← Back</button>
     <button class="csq-nav-btn csq-next-btn"><span>Continue</span></button>
   </div>
 </div>

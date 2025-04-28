@@ -39,8 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       this.dom.nextBtn.addEventListener('click', () => {
-        // Step 0: validate email/gender
         if (this.current === 0) {
+          // Step 0: require email/gender
           if (!this.dom.form.email.checkValidity() || !this.dom.form.gender.value) {
             alert('Please enter your email and select a gender.');
             return;
@@ -49,33 +49,34 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        // Last question -> Submit
         if (this.current === this.total - 2) {
+          // Last question: submit
           this.submit();
           return;
         }
 
-        // Intermediate question -> ensure one answer selected
-        const inputs = this.dom.steps[this.current].querySelectorAll('input[type="radio"]');
-        if (![...inputs].some(i => i.checked)) {
+        // For quiz steps: require an answer
+        const radios = this.dom.steps[this.current]
+          .querySelectorAll('input[type="radio"]');
+        if (![...radios].some(r => r.checked)) {
           alert('Please choose an option before continuing.');
           return;
         }
 
-        // Otherwise just advance
         this.goto(this.current + 1);
       });
 
       this.dom.form.addEventListener('submit', e => e.preventDefault());
 
-      // Answer card click highlighting
+      // Highlight selection
       document.querySelectorAll('.csq-answer-card').forEach(card =>
         card.addEventListener('click', () => {
-          card.querySelector('input').checked = true;
+          const inp = card.querySelector('input');
+          inp.checked = true;
           card.classList.add('selected');
           card.parentNode
             .querySelectorAll('.csq-answer-card')
-            .forEach(sib => { if (sib !== card) sib.classList.remove('selected'); });
+            .forEach(s => s !== card && s.classList.remove('selected'));
         })
       );
 
@@ -100,11 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     updateNav() {
-      // hide back on step 0 & 1
+      // Only allow “Back” when on question steps I≥1
       this.dom.prevBtn.style.visibility = this.current > 1 ? 'visible' : 'hidden';
-      // hide next on results
+      // Hide Continue on results
       this.dom.nextBtn.style.visibility = this.current === this.total - 1 ? 'hidden' : 'visible';
-      // change text
       this.dom.nextBtn.querySelector('span').textContent =
         this.current === this.total - 2 ? 'Submit' : 'Continue';
     }
@@ -124,9 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gender:   fm.get('gender')
       });
       const res  = await fetch(csqData.ajaxurl, {
-        method: 'POST',
-        headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
-        body:   params.toString()
+        method:  'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body:    params.toString()
       });
       const json = await res.json();
       if (json.success) this.sessionId = json.data.session_id;
@@ -144,21 +144,21 @@ document.addEventListener('DOMContentLoaded', () => {
       params.append('email',    fm.get('email'));
       params.append('gender',   fm.get('gender'));
       if (this.sessionId) params.append('session_id', this.sessionId);
-      fm.forEach((v,k) => {
-        if (k.startsWith('question_')) params.append('answers[]', v);
-      });
+      fm.forEach((v,k) => k.startsWith('question_') && params.append('answers[]', v));
 
       try {
         const resp = await fetch(csqData.ajaxurl, {
-          method: 'POST',
-          headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
-          body:   params.toString()
+          method:  'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body:    params.toString()
         });
         const json = await resp.json();
         if (!json.success) throw new Error(json.data || 'Server error');
+
         // Stop spinner & show results
         this.dom.loading.classList.remove('active');
         this.dom.results.style.display = '';
+
         // Render & animate
         this.renderResults(json.data.products);
       } catch (err) {
@@ -181,9 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         `).join('');
       }
-      // trigger the shine animation
+      // Shine animation
       this.dom.overlay.classList.add('animate-shine');
-      // hide nav buttons
+      // Hide nav
       this.dom.prevBtn.style.visibility = 'hidden';
       this.dom.nextBtn.style.visibility = 'hidden';
     }
