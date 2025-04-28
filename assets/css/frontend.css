@@ -1,0 +1,429 @@
+:root {
+  --primary: #FF8C00;
+  --alt: #FF3CAC;
+  --bg: #fff;
+  --border: rgba(0,0,0,0.1);
+  --radius: 16px;
+  --trans: all 0.3s ease;
+  --hero-grad: linear-gradient(135deg, var(--alt) 0%, var(--primary) 100%);
+}
+
+/* --------------------------------------
+   Hero Section
+-------------------------------------- */
+.csq-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--hero-grad);
+  color: #fff;
+  overflow: hidden;
+  clip-path: polygon(0 0,100% 0,100% 85%,0 100%);
+}
+.csq-hero-content {
+  text-align: center;
+  padding: 2rem;
+}
+.csq-hero-title {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.csq-hero-cta {
+  background: #fff;
+  color: var(--hero-grad);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 1rem 2.5rem;
+  border-radius: var(--radius);
+  border: 4px solid transparent;
+  background-image: var(--hero-grad);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: var(--trans);
+}
+.csq-hero-cta:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+}
+
+/* --------------------------------------
+   Instruction Overlay & Modal
+-------------------------------------- */
+.csq-instruction-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+}
+.csq-instruction-overlay.active {
+  display: flex;
+  animation: fadeInOverlay 0.4s ease forwards;
+}
+@keyframes fadeInOverlay { from { background: rgba(0,0,0,0) } to { background: rgba(0,0,0,0.6) } }
+
+.csq-instruction-modal {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  transform: scale(0.8);
+  opacity: 0;
+  animation: scaleIn 0.4s ease forwards;
+}
+@keyframes scaleIn { to { transform: scale(1); opacity: 1; } }
+
+.csq-modal-title {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+.csq-modal-text {
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+.csq-modal-start {
+  background: var(--hero-grad);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: var(--radius);
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--trans);
+}
+.csq-modal-start:hover {
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------
+   Quiz Container + Progress
+-------------------------------------- */
+.csq-quiz-container {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100vh;
+  padding: 2rem;
+  background: var(--bg);
+  overflow-y: auto;
+  box-sizing: border-box;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: var(--trans);
+}
+
+.csq-progress-track {
+  height: 12px;
+  background: var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+.csq-progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--hero-grad);
+  transition: width 0.6s ease;
+}
+.csq-progress-info {
+  font-size: 0.9rem;
+  color: #333;
+  text-align: right;
+  margin-bottom: 1.5rem;
+}
+
+/* --------------------------------------
+   Steps Animation
+-------------------------------------- */
+.csq-step {
+  display: none;
+  opacity: 0;
+  transform: translateX(30px);
+  transition: var(--trans);
+}
+.csq-step.active {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* --------------------------------------
+   Question Card Default
+-------------------------------------- */
+.csq-question-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-radius: var(--radius);
+  transition: var(--trans);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Theme Variants */
+.csq-theme-1 .csq-question-card {
+  grid-template-columns: 1.5fr 1fr;
+  gap: 0.75rem;
+}
+.csq-theme-1 .csq-media-container { order: 0; }
+
+.csq-theme-2 .csq-question-card {
+  grid-template-columns: 1fr 1.5fr;
+  border: 3px solid var(--alt);
+}
+.csq-theme-2 .csq-media-container { order: 1; }
+
+.csq-theme-3 .csq-question-card {
+  grid-template-columns: 1fr;
+  background: #fff5f5;
+}
+.csq-theme-3 .csq-media-container {
+  width: 100%; height: 200px;
+  margin-bottom: 1rem;
+}
+
+.csq-theme-4 .csq-question-card {
+  background: #333;
+  color: #eee;
+}
+.csq-theme-4 .csq-answer-card {
+  background: #444;
+  color: #fff;
+  border-color: #555;
+}
+
+/* Themes 5–10 (add your own styles) */
+.csq-theme-5 .csq-question-card { /* ... */ }
+.csq-theme-6 .csq-question-card { /* ... */ }
+.csq-theme-7 .csq-question-card { /* ... */ }
+.csq-theme-8 .csq-question-card { /* ... */ }
+.csq-theme-9 .csq-question-card { /* ... */ }
+.csq-theme-10 .csq-question-card { /* ... */ }
+
+/* --------------------------------------
+   Media Container
+-------------------------------------- */
+.csq-media-container {
+  width: 100%;
+  max-width: 280px;
+  height: 280px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.csq-question-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .csq-question-card { grid-template-columns: 1fr !important; }
+}
+
+/* --------------------------------------
+   Answers Grid & Cards
+-------------------------------------- */
+.csq-answer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.csq-answer-card {
+  position: relative;
+  padding: 1.25rem;
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--trans);
+  text-align: center;
+}
+.csq-answer-card.selected,
+.csq-answer-card:hover {
+  border-color: var(--alt);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.csq-answer-media {
+  max-width: 100%;
+  margin-top: 0.75rem;
+  border-radius: var(--radius);
+}
+
+/* --------------------------------------
+   Form Inputs
+-------------------------------------- */
+.csq-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.csq-form-input,
+.csq-form-select {
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  transition: var(--trans);
+}
+.csq-form-input:focus,
+.csq-form-select:focus {
+  border-color: var(--alt);
+  outline: none;
+}
+
+/* --------------------------------------
+   Navigation Buttons
+-------------------------------------- */
+.csq-quiz-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+.csq-nav-btn {
+  background: var(--hero-grad);
+  color: #fff;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--trans);
+}
+.csq-nav-btn[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+.csq-nav-btn:hover:not([disabled]) {
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------
+   Loading State
+-------------------------------------- */
+.csq-loading-state {
+  text-align: center;
+  padding: 2rem 0;
+  display: none;
+}
+.csq-loading-state.active {
+  display: block;
+}
+.csq-loading-spinner {
+  width: 50px;
+  height: 50px;
+  margin: auto 0;
+  border: 5px solid var(--border);
+  border-top-color: var(--hero-grad);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Champagne Shine Overlay */
+.csq-champagne-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.8) 0%,
+    rgba(255,255,255,0) 60%
+  );
+  opacity: 0;
+}
+.csq-champagne-overlay.animate-shine {
+  animation: shineDown 1s ease-out forwards;
+}
+@keyframes shineDown {
+  0%   { opacity: 0; transform: translateY(-100%); }
+  30%  { opacity: 0.9; transform: translateY(0); }
+  70%  { opacity: 0.9; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(100%); }
+}
+/* --------------------------------------
+   Results Grid
+-------------------------------------- */
+.csq-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.csq-product-card {
+  position: relative;
+  overflow: hidden;
+  background: #fafafa;
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transition: var(--trans);
+}
+.csq-product-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.4), transparent 70%);
+  transform: rotate(25deg) translate(-100%,-100%);
+  transition: var(--trans);
+}
+.csq-product-card:hover::before {
+  transform: rotate(25deg) translate(0,0);
+}
+.csq-product-card img {
+  max-width: 100%;
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+}
+.csq-product-card h3 {
+  margin-bottom: 0.25rem;
+  font-size: 1.1rem;
+}
+.csq-product-card p {
+  font-size: 0.9rem;
+  color: #555;
+}
+.csq-product-card a {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: var(--alt);
+  font-weight: bold;
+  text-decoration: none;
+  transition: var(--trans);
+}
+.csq-product-card a:hover {
+  color: var(--primary);
+}
+
+/* --------------------------------------
+   Restart Button
+-------------------------------------- */
+.csq-restart-btn {
+  margin-top: 1.5rem;
+  background: var(--alt);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--trans);
+}
+.csq-restart-btn:hover {
+  transform: translateY(-2px);
+}
