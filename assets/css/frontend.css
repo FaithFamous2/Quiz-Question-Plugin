@@ -1,429 +1,838 @@
+/* ==============================================
+   Skincare Quiz Modern Design
+   Color Palette:
+   Primary: #5C7E6E (Nature Green)
+   Secondary: #F5ECE4 (Cream)
+   Accent: #D9BFA9 (Beige)
+   Text: #3D3D3D (Dark Gray)
+   Light: #FFFFFF (White)
+============================================== */
+
 :root {
-  --primary: #129619;
-  --alt: #80c46d;
-  --bg: #fff;
-  --border: rgba(0,0,0,0.1);
-  --radius: 16px;
-  --trans: all 0.3s ease;
-  --hero-grad: linear-gradient(135deg, var(--alt) 0%, var(--primary) 100%);
+  --skin-primary: #5C7E6E;
+  --skin-primary-light: #7A9D8F;
+  --skin-secondary: #F5ECE4;
+  --skin-accent: #D9BFA9;
+  --skin-text: #3D3D3D;
+  --skin-light: #FFFFFF;
+  --skin-border: rgba(92, 126, 110, 0.15);
+  --skin-shadow: 0 8px 30px rgba(92, 126, 110, 0.12);
+  --skin-radius: 16px;
+  --skin-transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* --------------------------------------
-   Hero Section
--------------------------------------- */
-.csq-hero {
+/* Base Styles */
+.csq-skin-hero,
+.csq-skin-overlay,
+.csq-skin-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  color: var(--skin-text);
+  line-height: 1.6;
+}
+
+/* Hero Section */
+.csq-skin-hero {
   position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--hero-grad);
-  color: #fff;
+  background: linear-gradient(135deg, var(--skin-secondary) 0%, var(--skin-light) 100%);
   overflow: hidden;
-  clip-path: polygon(0 0,100% 0,100% 85%,0 100%);
-}
-.csq-hero-content {
-  text-align: center;
   padding: 2rem;
 }
-.csq-hero-title {
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-.csq-hero-cta {
-  background: #fff;
-  color: var(--hero-grad);
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 1rem 2.5rem;
-  border-radius: var(--radius);
-  border: 4px solid transparent;
-  background-image: var(--hero-grad);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  cursor: pointer;
-  transition: var(--trans);
-}
-.csq-hero-cta:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+
+.csq-hero-content {
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  z-index: 2;
 }
 
-/* --------------------------------------
-   Instruction Overlay & Modal
--------------------------------------- */
-.csq-instruction-overlay {
+.csq-hero-text {
+  max-width: 600px;
+}
+
+.csq-hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--skin-primary);
+  margin-bottom: 1.5rem;
+}
+
+.csq-hero-subtitle {
+  font-size: 1.5rem;
+  color: var(--skin-text);
+  opacity: 0.8;
+  margin-bottom: 2.5rem;
+}
+
+.csq-hero-visual {
+  position: relative;
+  height: 500px;
+}
+
+.csq-skin-illustration {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" fill="%235C7E6E" opacity="0.1"/><circle cx="130" cy="70" r="30" fill="%235C7E6E" opacity="0.15"/><circle cx="70" cy="130" r="20" fill="%235C7E6E" opacity="0.15"/></svg>') center no-repeat;
+  background-size: contain;
+  border-radius: var(--skin-radius);
+}
+
+.csq-hero-cta {
+  background: var(--skin-primary);
+  color: var(--skin-light);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: var(--skin-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 10px 20px rgba(92, 126, 110, 0.25);
+}
+
+.csq-hero-cta:hover {
+  background: var(--skin-primary-light);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(92, 126, 110, 0.3);
+}
+
+/* Modal Overlay */
+.csq-skin-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  display: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(245, 236, 228, 0.95);
+  display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--skin-transition);
 }
-.csq-instruction-overlay.active {
-  display: flex;
-  animation: fadeInOverlay 0.4s ease forwards;
-}
-@keyframes fadeInOverlay { from { background: rgba(0,0,0,0) } to { background: rgba(0,0,0,0.6) } }
 
-.csq-instruction-modal {
-  background: var(--bg);
-  border-radius: var(--radius);
-  padding: 2rem;
-  max-width: 400px;
+.csq-skin-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.csq-skin-modal {
+  background: var(--skin-light);
+  border-radius: var(--skin-radius);
+  padding: 3rem;
+  max-width: 600px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-  transform: scale(0.8);
+  box-shadow: var(--skin-shadow);
+  position: relative;
+  transform: translateY(20px);
   opacity: 0;
-  animation: scaleIn 0.4s ease forwards;
+  transition: var(--skin-transition);
 }
-@keyframes scaleIn { to { transform: scale(1); opacity: 1; } }
+
+.csq-skin-overlay.active .csq-skin-modal {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.csq-modal-header {
+  margin-bottom: 2.5rem;
+  position: relative;
+}
 
 .csq-modal-title {
-  font-size: 1.75rem;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--skin-primary);
   margin-bottom: 1rem;
-  color: var(--primary);
-}
-.csq-modal-text {
-  margin-bottom: 1.5rem;
-  line-height: 1.4;
-}
-.csq-modal-start {
-  background: var(--hero-grad);
-  color: #fff;
-  border: none;
-  padding: 0.75rem 2rem;
-  border-radius: var(--radius);
-  font-weight: bold;
-  cursor: pointer;
-  transition: var(--trans);
-}
-.csq-modal-start:hover {
-  transform: translateY(-2px);
 }
 
-/* --------------------------------------
-   Quiz Container + Progress
--------------------------------------- */
-.csq-quiz-container {
+.csq-modal-decor {
   position: absolute;
-  top: 0; left: 0;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.csq-leaf-decor {
+  position: absolute;
+  background: var(--skin-accent);
+  width: 30px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+.csq-leaf-1 {
+  top: 0;
+  left: -20px;
+  transform: rotate(-30deg);
+}
+
+.csq-leaf-2 {
+  top: 10px;
+  left: 0;
+  transform: rotate(15deg);
+}
+
+.csq-leaf-3 {
+  top: 0;
+  left: 20px;
+  transform: rotate(30deg);
+}
+
+.csq-modal-step {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  padding: 1.25rem;
+  background: rgba(92, 126, 110, 0.05);
+  border-radius: var(--skin-radius);
+}
+
+.csq-step-number {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--skin-primary);
+  color: var(--skin-light);
+  border-radius: 50%;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.csq-modal-start {
+  background: var(--skin-primary);
+  color: var(--skin-light);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: var(--skin-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.csq-modal-start:hover {
+  background: var(--skin-primary-light);
+  transform: translateY(-3px);
+}
+
+/* Quiz Container */
+.csq-skin-container {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   padding: 2rem;
-  background: var(--bg);
+  background: var(--skin-light);
   overflow-y: auto;
   box-sizing: border-box;
   transform: translateX(100%);
   opacity: 0;
-  transition: var(--trans);
+  transition: var(--skin-transition);
+  z-index: 10;
+}
+
+.csq-skin-container.active {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Progress Bar */
+.csq-skin-progress {
+  max-width: 800px;
+  margin: 0 auto 3rem;
 }
 
 .csq-progress-track {
-  height: 12px;
-  background: var(--border);
-  border-radius: 6px;
+  height: 8px;
+  background: var(--skin-border);
+  border-radius: 4px;
   overflow: hidden;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
+
 .csq-progress-bar {
   height: 100%;
   width: 0;
-  background: var(--hero-grad);
+  background: var(--skin-primary);
   transition: width 0.6s ease;
 }
+
 .csq-progress-info {
+  display: flex;
+  justify-content: space-between;
   font-size: 0.9rem;
-  color: #333;
-  text-align: right;
-  margin-bottom: 1.5rem;
+  color: var(--skin-primary-light);
 }
 
-/* --------------------------------------
-   Steps Animation
--------------------------------------- */
-.csq-step {
+/* Form Steps */
+.csq-skin-step {
   display: none;
-  opacity: 0;
-  transform: translateX(30px);
-  transition: var(--trans);
+  max-width: 800px;
+  margin: 0 auto;
 }
-.csq-step.active {
+
+.csq-skin-step.active {
   display: block;
-  opacity: 1;
-  transform: translateX(0);
+  animation: fadeIn 0.5s ease forwards;
 }
 
-/* --------------------------------------
-   Question Card Default
--------------------------------------- */
-.csq-question-card {
-  display: grid;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: #f9f9f9;
-  border-radius: var(--radius);
-  transition: var(--trans);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Theme Variants */
-.csq-theme-1 .csq-question-card {
-  grid-template-columns: 1.5fr 1fr;
-  gap: 0.75rem;
-}
-.csq-theme-1 .csq-media-container { order: 0; }
-
-.csq-theme-2 .csq-question-card {
-  grid-template-columns: 1fr 1.5fr;
-  border: 3px solid var(--alt);
-}
-.csq-theme-2 .csq-media-container { order: 1; }
-
-.csq-theme-3 .csq-question-card {
-  grid-template-columns: 1fr;
-  background: #fff5f5;
-}
-.csq-theme-3 .csq-media-container {
-  width: 100%; height: 200px;
-  margin-bottom: 1rem;
+/* Form Card */
+.csq-skin-card {
+  background: var(--skin-light);
+  border-radius: var(--skin-radius);
+  padding: 2.5rem;
+  box-shadow: var(--skin-shadow);
 }
 
-.csq-theme-4 .csq-question-card {
-  background: #333;
-  color: #eee;
-}
-.csq-theme-4 .csq-answer-card {
-  background: #444;
-  color: #fff;
-  border-color: #555;
+.csq-card-header {
+  margin-bottom: 2rem;
+  position: relative;
 }
 
-/* Themes 5–10 (add your own styles) */
-.csq-theme-5 .csq-question-card { /* ... */ }
-.csq-theme-6 .csq-question-card { /* ... */ }
-.csq-theme-7 .csq-question-card { /* ... */ }
-.csq-theme-8 .csq-question-card { /* ... */ }
-.csq-theme-9 .csq-question-card { /* ... */ }
-.csq-theme-10 .csq-question-card { /* ... */ }
-
-/* --------------------------------------
-   Media Container
--------------------------------------- */
-.csq-media-container {
-  width: 100%;
-  max-width: 280px;
-  height: 280px;
-  overflow: hidden;
-  border-radius: var(--radius);
-  background: var(--border);
+.csq-card-icon {
+  position: absolute;
+  top: -25px;
+  left: 30px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--skin-light);
+  border-radius: 50%;
+  box-shadow: 0 5px 15px rgba(92, 126, 110, 0.15);
 }
-.csq-question-media {
+
+.csq-card-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--skin-primary);
+  margin-bottom: 0.5rem;
+}
+
+.csq-card-subtitle {
+  font-size: 1.1rem;
+  color: var(--skin-text);
+  opacity: 0.8;
+}
+
+/* Form Elements */
+.csq-form-group {
+  margin-bottom: 1.75rem;
+}
+
+.csq-input-label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--skin-primary);
+}
+
+.csq-input-with-icon {
+  position: relative;
+}
+
+.csq-input-with-icon svg {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--skin-primary-light);
+}
+
+.csq-form-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 1px solid var(--skin-border);
+  border-radius: var(--skin-radius);
+  font-size: 1rem;
+  transition: var(--skin-transition);
+}
+
+.csq-form-input:focus {
+  border-color: var(--skin-primary-light);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(92, 126, 110, 0.1);
+}
+
+.csq-gender-select {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.csq-gender-option input {
+  display: none;
+}
+
+.csq-gender-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  border: 1px solid var(--skin-border);
+  border-radius: var(--skin-radius);
+  cursor: pointer;
+  transition: var(--skin-transition);
+  text-align: center;
+}
+
+.csq-gender-option input:checked + .csq-gender-content {
+  border-color: var(--skin-primary);
+  background: rgba(92, 126, 110, 0.05);
+  box-shadow: 0 0 0 2px var(--skin-primary);
+}
+
+.csq-gender-content svg {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1rem;
+  color: var(--skin-primary-light);
+  transition: var(--skin-transition);
+}
+
+.csq-gender-option input:checked + .csq-gender-content svg {
+  color: var(--skin-primary);
+}
+
+.csq-gender-option:hover .csq-gender-content {
+  border-color: var(--skin-primary-light);
+}
+
+/* Media Elements */
+.csq-skin-media {
+  margin-bottom: 2rem;
+  border-radius: var(--skin-radius);
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.csq-skin-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Answer Grid */
+.csq-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+
+.csq-answer-card input {
+  display: none;
+}
+
+.csq-answer-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border: 1px solid var(--skin-border);
+  border-radius: var(--skin-radius);
+  cursor: pointer;
+  transition: var(--skin-transition);
+}
+
+.csq-answer-card input:checked + .csq-answer-content {
+  border-color: var(--skin-primary);
+  background: rgba(92, 126, 110, 0.05);
+  box-shadow: 0 0 0 2px var(--skin-primary);
+}
+
+.csq-answer-card:hover .csq-answer-content {
+  border-color: var(--skin-primary-light);
+}
+
+.csq-answer-media {
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 140px;
+  background: var(--skin-secondary);
+}
+
+.csq-answer-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-@media (max-width: 768px) {
-  .csq-question-card { grid-template-columns: 1fr !important; }
-}
-
-/* --------------------------------------
-   Answers Grid & Cards
--------------------------------------- */
-.csq-answer-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-.csq-answer-card {
-  position: relative;
-  padding: 1.25rem;
-  background: #fff;
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: var(--trans);
+.csq-answer-text {
+  font-weight: 500;
+  color: var(--skin-text);
   text-align: center;
-}
-.csq-answer-card.selected,
-.csq-answer-card:hover {
-  border-color: var(--alt);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-.csq-answer-media {
-  max-width: 100%;
-  margin-top: 0.75rem;
-  border-radius: var(--radius);
+  margin-top: auto;
 }
 
-/* --------------------------------------
-   Form Inputs
--------------------------------------- */
-.csq-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-.csq-form-input,
-.csq-form-select {
-  padding: 0.75rem 1rem;
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  transition: var(--trans);
-}
-.csq-form-input:focus,
-.csq-form-select:focus {
-  border-color: var(--alt);
-  outline: none;
-}
-
-/* --------------------------------------
-   Navigation Buttons
--------------------------------------- */
-.csq-quiz-controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-}
-.csq-nav-btn {
-  background: var(--hero-grad);
-  color: #fff;
-  padding: 0.75rem 2rem;
-  border: none;
-  border-radius: var(--radius);
-  font-weight: bold;
-  cursor: pointer;
-  transition: var(--trans);
-}
-.csq-nav-btn[disabled] {
-  opacity: 0.5;
-  cursor: default;
-}
-.csq-nav-btn:hover:not([disabled]) {
-  transform: translateY(-2px);
-}
-
-/* --------------------------------------
-   Loading State
--------------------------------------- */
-.csq-loading-state {
-  text-align: center;
-  padding: 2rem 0;
-  display: none;
-}
-.csq-loading-state.active {
-  display: block;
-}
-.csq-loading-spinner {
-  width: 50px;
-  height: 50px;
-  margin: auto 0;
-  border: 5px solid var(--border);
-  border-top-color: var(--hero-grad);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Champagne Shine Overlay */
-.csq-champagne-overlay {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.8) 0%,
-    rgba(255,255,255,0) 60%
-  );
-  opacity: 0;
-}
-.csq-champagne-overlay.animate-shine {
-  animation: shineDown 1s ease-out forwards;
-}
-@keyframes shineDown {
-  0%   { opacity: 0; transform: translateY(-100%); }
-  30%  { opacity: 0.9; transform: translateY(0); }
-  70%  { opacity: 0.9; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(100%); }
-}
-/* --------------------------------------
-   Results Grid
--------------------------------------- */
-.csq-products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-.csq-product-card {
-  position: relative;
+/* Results Section */
+.csq-results-container {
+  background: var(--skin-light);
+  border-radius: var(--skin-radius);
+  box-shadow: var(--skin-shadow);
   overflow: hidden;
-  background: #fafafa;
-  border-radius: var(--radius);
-  padding: 1rem;
+}
+
+.csq-results-header {
+  padding: 3rem 2rem 2rem;
+  background: var(--skin-secondary);
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  transition: var(--trans);
+  position: relative;
 }
-.csq-product-card::before {
-  content: '';
-  position: absolute;
-  top: -50%; left: -50%;
-  width: 200%; height: 200%;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.4), transparent 70%);
-  transform: rotate(25deg) translate(-100%,-100%);
-  transition: var(--trans);
-}
-.csq-product-card:hover::before {
-  transform: rotate(25deg) translate(0,0);
-}
-.csq-product-card img {
-  max-width: 100%;
-  border-radius: var(--radius);
+
+.csq-results-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--skin-primary);
   margin-bottom: 0.5rem;
 }
-.csq-product-card h3 {
-  margin-bottom: 0.25rem;
-  font-size: 1.1rem;
-}
-.csq-product-card p {
-  font-size: 0.9rem;
-  color: #555;
-}
-.csq-product-card a {
-  display: inline-block;
-  margin-top: 0.5rem;
-  color: var(--alt);
-  font-weight: bold;
-  text-decoration: none;
-  transition: var(--trans);
-}
-.csq-product-card a:hover {
-  color: var(--primary);
+
+.csq-results-subtitle {
+  font-size: 1.25rem;
+  color: var(--skin-text);
+  opacity: 0.8;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-/* --------------------------------------
-   Restart Button
--------------------------------------- */
-.csq-restart-btn {
-  margin-top: 1.5rem;
-  background: var(--alt);
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: var(--trans);
+.csq-results-decor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  overflow: hidden;
 }
+
+.csq-results-leaf {
+  position: absolute;
+  background: var(--skin-accent);
+  width: 40px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.csq-leaf-1 {
+  top: 15px;
+  left: 10%;
+  transform: rotate(-30deg);
+}
+
+.csq-leaf-2 {
+  top: 25px;
+  right: 10%;
+  transform: rotate(30deg);
+}
+
+.csq-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  padding: 3rem;
+}
+
+.csq-product-card {
+  background: var(--skin-light);
+  border-radius: var(--skin-radius);
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  transition: var(--skin-transition);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+
+.csq-product-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.csq-product-image {
+  height: 200px;
+  background: var(--skin-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.csq-product-image {
+  height: 200px;
+  background: var(--skin-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.csq-product-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.csq-product-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.csq-product-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--skin-primary);
+  margin-bottom: 0.75rem;
+}
+
+.csq-product-desc {
+  font-size: 0.95rem;
+  color: var(--skin-text);
+  opacity: 0.8;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+}
+.csq-product-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--skin-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--skin-transition);
+  padding: 0.75rem 1.5rem;
+  background: rgba(92, 126, 110, 0.1);
+  border-radius: 50px;
+  width: fit-content;
+}
+
+.csq-product-link:hover {
+  background: var(--skin-primary);
+  color: var(--skin-light);
+}
+
+/* Results Footer */
+.csq-results-footer {
+  padding: 2rem;
+  text-align: center;
+  border-top: 1px solid var(--skin-border);
+  margin-top: 2rem;
+}
+
+.csq-results-note {
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  font-size: 1rem;
+  color: var(--skin-text);
+  opacity: 0.8;
+}
+
+.csq-restart-btn {
+  background: transparent;
+  color: var(--skin-primary);
+  font-weight: 600;
+  padding: 0.75rem 1.75rem;
+  border: 2px solid var(--skin-primary);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--skin-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .csq-restart-btn:hover {
-  transform: translateY(-2px);
+  background: var(--skin-primary);
+  color: var(--skin-light);
+}
+
+/* Loading State */
+.csq-loading-state {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.csq-skin-spinner {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+
+.csq-spinner-dot {
+  width: 16px;
+  height: 16px;
+  background: var(--skin-primary-light);
+  border-radius: 50%;
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+.csq-spinner-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.csq-spinner-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%, 60%, 100% { transform: scale(0.8); opacity: 0.5; }
+  30% { transform: scale(1.1); opacity: 1; }
+}
+
+.csq-loading-text {
+  font-size: 1.25rem;
+  color: var(--skin-text);
+  opacity: 0.8;
+}
+
+/* Navigation Controls */
+.csq-skin-controls {
+  display: flex;
+  justify-content: space-between;
+  max-width: 800px;
+  margin: 2rem auto 0;
+}
+
+.csq-nav-btn {
+  background: var(--skin-light);
+  color: var(--skin-primary);
+  font-weight: 600;
+  padding: 0.75rem 1.75rem;
+  border: 2px solid var(--skin-primary);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--skin-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.csq-nav-btn:hover {
+  background: var(--skin-primary);
+  color: var(--skin-light);
+}
+
+.csq-nav-btn[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .csq-hero-content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .csq-hero-text {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .csq-hero-visual {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .csq-hero-title {
+    font-size: 2.5rem;
+  }
+
+  .csq-hero-subtitle {
+    font-size: 1.25rem;
+  }
+
+  .csq-skin-modal {
+    padding: 2rem;
+  }
+
+  .csq-modal-title {
+    font-size: 1.75rem;
+  }
+
+  .csq-skin-card {
+    padding: 1.75rem;
+  }
+
+  .csq-card-title {
+    font-size: 1.5rem;
+  }
+
+  .csq-answer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .csq-products-grid {
+    padding: 1.5rem;
+    grid-template-columns: 1fr;
+  }
+
+  .csq-nav-btn {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .csq-hero-title {
+    font-size: 2rem;
+  }
+
+  .csq-hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .csq-hero-cta,
+  .csq-modal-start {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .csq-gender-select {
+    grid-template-columns: 1fr;
+  }
+
+  .csq-skin-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .csq-nav-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
