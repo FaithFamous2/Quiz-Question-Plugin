@@ -1,8 +1,16 @@
 <?php
 function csq_responses_page() {
     global $wpdb;
-    $table = $wpdb->prefix . 'quiz_responses';
-    $responses = $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC");
+    $table_name = $wpdb->prefix . 'quiz_responses';
+
+    // Add new columns if they don't exist
+    $ip_exists = $wpdb->get_var("SHOW COLUMNS FROM $table_name LIKE 'ip_address'");
+    if (!$ip_exists) {
+        $wpdb->query("ALTER TABLE $table_name ADD ip_address VARCHAR(45) DEFAULT ''");
+        $wpdb->query("ALTER TABLE $table_name ADD user_agent TEXT DEFAULT ''");
+    }
+
+    $responses = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
 
     ?>
     <div class="wrap csq-admin">
@@ -14,7 +22,9 @@ function csq_responses_page() {
                     <tr>
                         <th>Email</th>
                         <th>Gender</th>
+                        <th>Name</th>
                         <th>Recommended Products</th>
+                        <th>IP Address</th>
                         <th>Date</th>
                         <th>Actions</th>
                     </tr>
@@ -26,6 +36,7 @@ function csq_responses_page() {
                         <tr>
                             <td><?= esc_html($response->user_email) ?></td>
                             <td><?= esc_html($response->gender) ?></td>
+                            <td><?= esc_html($response->fullname) ?></td>
                             <td>
                                 <?php if (!empty($response->final_product)) : ?>
                                     <div class="product-tags">
@@ -37,12 +48,15 @@ function csq_responses_page() {
                                     <span class="text-muted">No products matched</span>
                                 <?php endif; ?>
                             </td>
+                            <td><?= esc_html($response->ip_address) ?></td>
                             <td><?= date('M j, Y H:i', strtotime($response->created_at)) ?></td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-info view-details"
                                         data-response="<?= htmlspecialchars(json_encode([
                                             'responses' => maybe_unserialize($response->responses),
-                                            'product_votes' => $product_votes
+                                            'product_votes' => $product_votes,
+                                            'ip_address' => $response->ip_address,
+                                            'user_agent' => $response->user_agent
                                         ]), ENT_QUOTES, 'UTF-8') ?>">
                                     View Details
                                 </button>
@@ -90,7 +104,7 @@ function csq_responses_page() {
             font-style: italic;
         }
     </style>
-     <script>
+    <script>
     (function($) {
         'use strict';
 
@@ -106,6 +120,15 @@ function csq_responses_page() {
 
                 // Build response details HTML
                 let html = '<div class="response-details">';
+
+                // IP and User Agent
+                html += '<div class="mb-4">';
+                html += '<h4 class="mb-3">Technical Info</h4>';
+                html += '<ul class="list-group">';
+                html += `<li class="list-group-item"><strong>IP Address:</strong> ${responseData.ip_address || 'N/A'}</li>`;
+                html += `<li class="list-group-item"><strong>User Agent:</strong> ${responseData.user_agent || 'N/A'}</li>`;
+                html += '</ul>';
+                html += '</div>';
 
                 // Answers Section
                 html += '<div class="mb-4">';
