@@ -386,7 +386,25 @@ function csq_enqueue_assets() {
 }
 
 function csq_admin_assets($hook) {
-    if (strpos($hook, 'csq-') === false) return;
+    // Only load on our plugin pages
+    if (strpos($hook, 'csq-') === false && $hook !== 'toplevel_page_csq-responses') {
+        return;
+    }
+
+    // Load Chart.js only on responses page
+    if ($hook === 'toplevel_page_csq-responses') {
+        wp_enqueue_script(
+            'chart-js',
+            'https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js',
+            array(),
+            '3.7.0',
+            true
+        );
+    }
+
+    // Enqueue DataTables for all admin pages
+    wp_enqueue_style('datatables', 'https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css');
+    wp_enqueue_script('datatables', 'https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js', ['jquery'], '1.13.6', true);
 
     wp_enqueue_style(
         'csq-admin',
@@ -401,7 +419,7 @@ function csq_admin_assets($hook) {
     wp_enqueue_script(
         'csq-admin',
         CSQ_PLUGIN_URL . 'assets/js/admin.js',
-        ['jquery', 'select2'],
+        ['jquery', 'select2', 'datatables'],
         filemtime(CSQ_PLUGIN_PATH . 'assets/js/admin.js'),
         true
     );
