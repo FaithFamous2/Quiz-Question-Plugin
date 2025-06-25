@@ -11,15 +11,27 @@
      --csq-accent: #5c7e6e;
    }
 
-   .csq-skin-analysis-system {
+   html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+   /* .csq-skin-analysis-system {
      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
      margin: 0 auto;
      padding: 0.5rem;
      color: #2c3e50;
-   }
+   } */
+   .csq-skin-analysis-system {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #2c3e50;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
    /* Hero Section */
-   .csq-skin-hero {
+   /* .csq-skin-hero {
      background: linear-gradient(135deg, var(--csq-primary) 0%, var(--csq-accent) 100%);
      border-radius: 24px;
      overflow: hidden;
@@ -27,9 +39,24 @@
      position: relative;
      z-index: 1;
      margin-bottom: 2rem;
-   }
+   } */
 
-   .csq-hero-content {
+   .csq-skin-hero {
+    background: linear-gradient(135deg, var(--csq-primary) 0%, var(--csq-accent) 100%);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 2rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Ensure full viewport height */
+  }
+
+   /* .csq-hero-content {
      display: flex;
      flex-direction: column;
      align-items: center;
@@ -59,7 +86,41 @@
      position: relative;
      width: 300px;
      height: 300px;
-   }
+   } */
+   .csq-hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .csq-hero-title {
+    font-size: clamp(2rem, 5vw, 2.8rem); /* Responsive font size */
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: white;
+    max-width: 100%;
+  }
+
+  .csq-hero-subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.2rem); /* Responsive font size */
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 2rem;
+    max-width: 100%;
+  }
+
+  .csq-hero-visual {
+    margin: 2rem 0;
+    position: relative;
+    width: clamp(200px, 60vw, 300px); /* Responsive size */
+    height: clamp(200px, 60vw, 300px); /* Responsive size */
+  }
 
    .csq-skin-illustration {
      width: 100%;
@@ -982,6 +1043,22 @@
       RESPONSIVE STYLES
       ========================================================================== */
    @media (max-width: 992px) {
+
+    .csq-hero-content {
+      flex-direction: column;
+      text-align: center;
+      padding: 4rem;
+    }
+    .csq-hero-text {
+      flex: 1;
+      /* padding-right: 3rem; */
+    }
+
+    .csq-hero-visual {
+      flex: 1;
+      max-width: 400px;
+    }
+
      .csq-hero-title {
        font-size: 2.4rem;
      }
@@ -1006,6 +1083,11 @@
    }
 
    @media (max-width: 768px) {
+
+     .csq-skin-hero {
+       border-radius: 0;
+       margin-bottom: 0;
+     }
      .csq-skin-analysis-system {
        padding: 1rem;
      }
@@ -1049,9 +1131,9 @@
    }
 
    @media (max-width: 576px) {
-     .csq-hero-title {
-       font-size: 1.8rem;
-     }
+     /* .csq-hero-title {
+       font-size: 0rem;
+     } */
 
      .csq-hero-visual {
        width: 220px;
