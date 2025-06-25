@@ -3,7 +3,8 @@
 Plugin Name: Advanced Skin Care Quiz
 Description: Professional skincare quiz with product recommendations and analytics. Includes multi-product associations and threshold-based suggestions.
 Version: 4.1
-Author: Olowookere Faith Famouzcoder
+Author: Olowookere Faith - Famouzcoder
+website: famouzcoder@gmail.com
 */
 
 defined('ABSPATH') || exit;
@@ -33,11 +34,11 @@ function csq_deactivate_plugin() {
 add_action('plugins_loaded', 'csq_check_database');
 
 function csq_check_database() {
-    $current_version = get_option('csq_plugin_version', '1.0');
+    $current_version = get_option('csq_plugin_version', '4.1');
 
-    if (version_compare($current_version, '4.1', '<')) {
+    if (version_compare($current_version, '4.2', '<')) {
         csq_create_database();
-        update_option('csq_plugin_version', '4.1');
+        update_option('csq_plugin_version', '4.2');
     }
 }
 
