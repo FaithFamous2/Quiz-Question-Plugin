@@ -378,10 +378,14 @@ function csq_enqueue_assets() {
         true
     );
 
+    $questions = csq_get_questions();
+    $question_count = count( $questions );
+
     wp_localize_script('csq-frontend', 'csqData', [
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce'   => wp_create_nonce('csq_quiz_nonce'),
-        'assets'  => CSQ_PLUGIN_URL . 'assets/'
+        'assets'  => CSQ_PLUGIN_URL . 'assets/',
+         'questionCount' => $question_count,
     ]);
 }
 

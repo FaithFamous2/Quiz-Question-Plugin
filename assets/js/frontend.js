@@ -4,6 +4,7 @@ jQuery(function($) {
       const quizSystem = $('.csq-skin-analysis-system');
       let currentStep = 1;
       let totalSteps = $('.csq-analysis-step').length;
+      const questionCount = totalSteps - 2;
       let sessionID = null;
       let answers = {};
       let userEmail = '';
@@ -252,13 +253,21 @@ jQuery(function($) {
           }
 
           // Calculate match percentage
-          let maxVotes = 0;
-          if (data.total_votes && Object.keys(data.total_votes).length > 0) {
-              maxVotes = Math.max(...Object.values(data.total_votes));
-          }
+          // let maxVotes = 0;
+          // if (data.total_votes && Object.keys(data.total_votes).length > 0) {
+          //     maxVotes = Math.max(...Object.values(data.total_votes));
+          // }
 
-          const matchPercentage = Math.round((maxVotes / Object.keys(data.answers || {}).length) * 100);
-          $('#csq-match-percentage').text(matchPercentage);
+          // // const matchPercentage = Math.round((maxVotes / Object.keys(data.answers || {}).length) * 100);
+          // const matchPercentage = questionCount > 0
+          // ? Math.round((maxVotes / questionCount) * 100)
+          // : 0;
+          // $('#csq-match-percentage').text(matchPercentage);
+
+           // Show how many products matched
+       const matchCount = Array.isArray(data.products) ? data.products.length : 0;
+        $('#csq-match-percentage').text(matchCount);
+
 
           if (data.products && data.products.length > 0) {
               // Find max votes for percentage calculation

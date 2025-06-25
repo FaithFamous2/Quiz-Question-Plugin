@@ -215,7 +215,7 @@ $total_steps = count($questions) + 2;
         <?php endforeach; ?>
 
         <!-- Results Step -->
-        <div class="csq-analysis-step" data-step="<?php echo $total_steps + 2; ?>">
+        <div class="csq-analysis-step" data-step="<?php echo $total_steps; ?>">
           <div class="csq-results-container">
             <div class="csq-analysis-loading">
               <div class="csq-skin-spinner">
