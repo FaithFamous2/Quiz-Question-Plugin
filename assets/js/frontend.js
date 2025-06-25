@@ -332,29 +332,36 @@ jQuery(function($) {
               return;
           }
 
+          const submitBtn = $(this).find('button[type="submit"]');
+          const originalText = submitBtn.html();
+          submitBtn.html('<span class="csq-spinner"></span> Sending...').prop('disabled', true);
+
           // AJAX request to send email
           $.ajax({
-              url: csqData.ajaxurl,
-              type: 'POST',
-              data: {
-                  action: 'csq_email_results',
-                  security: csqData.nonce,
-                  session_id: sessionID,
-                  email: email
-              },
-              success: function(response) {
-                  if (response.success) {
-                      alert('Your results have been sent to ' + email);
-                      closeModal();
-                  } else {
-                      alert('Error sending email: ' + response.data);
-                  }
-              },
-              error: function(xhr) {
-                  console.error('Error sending email:', xhr.responseText);
-                  alert('An error occurred while sending your results. Please try again.');
-              }
-          });
+            url: csqData.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'csq_email_results',
+                security: csqData.nonce,
+                session_id: sessionID,
+                email: email
+            },
+            success: function(response) {
+                submitBtn.html(originalText).prop('disabled', false);
+
+                if (response.success) {
+                    alert('Your results have been sent to ' + email);
+                    closeModal();
+                } else {
+                    alert('Error sending email: ' + response.data);
+                }
+            },
+            error: function(xhr) {
+                submitBtn.html(originalText).prop('disabled', false);
+                console.error('Error sending email:', xhr.responseText);
+                alert('An error occurred while sending your results. Please try again.');
+            }
+        });
       }
 
       // Restart quiz

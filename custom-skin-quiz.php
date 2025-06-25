@@ -21,19 +21,22 @@ define('CSQ_PLUGIN_URL', plugin_dir_url(__FILE__));
 register_activation_hook(__FILE__, 'csq_activate_plugin');
 register_deactivation_hook(__FILE__, 'csq_deactivate_plugin');
 
-function csq_activate_plugin() {
+function csq_activate_plugin()
+{
     csq_create_database();
     update_option('csq_plugin_version', '4.1');
     flush_rewrite_rules();
 }
 
-function csq_deactivate_plugin() {
+function csq_deactivate_plugin()
+{
     flush_rewrite_rules();
 }
 
 add_action('plugins_loaded', 'csq_check_database');
 
-function csq_check_database() {
+function csq_check_database()
+{
     $current_version = get_option('csq_plugin_version', '4.1');
 
     if (version_compare($current_version, '4.2', '<')) {
@@ -42,7 +45,8 @@ function csq_check_database() {
     }
 }
 
-function csq_create_database() {
+function csq_create_database()
+{
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
     $table_prefix = $wpdb->prefix;
@@ -122,7 +126,7 @@ function csq_create_database() {
             if (!in_array('user_agent', $columns)) {
                 $wpdb->query("ALTER TABLE $table_name ADD user_agent TEXT DEFAULT ''");
             }
-                        // In csq_create_database() after table check
+            // In csq_create_database() after table check
             if (!in_array('updated_at', $columns)) {
                 $wpdb->query("ALTER TABLE $table_name
                     ADD updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
@@ -144,7 +148,8 @@ function csq_create_database() {
 // =============================================================================
 
 
-function csq_admin_menu() {
+function csq_admin_menu()
+{
     add_menu_page(
         'Skin Quiz',
         'Skin Quiz',
@@ -176,12 +181,13 @@ require_once CSQ_PLUGIN_PATH . 'admin/dashboard.php';
 // =============================================================================
 add_shortcode('skin_quiz', 'csq_quiz_shortcode');
 
-function csq_quiz_shortcode() {
+function csq_quiz_shortcode()
+{
     wp_enqueue_style('csq-frontend');
     wp_enqueue_script('csq-frontend');
 
     $questions = csq_get_questions();
-    $answers   = csq_get_answers();
+    $answers = csq_get_answers();
 
     ob_start();
     include CSQ_PLUGIN_PATH . 'templates/quiz-form.php';
@@ -198,14 +204,15 @@ add_action('wp_ajax_nopriv_csq_email_results', 'csq_email_results');
 add_action('wp_ajax_csq_process_quiz', 'csq_process_quiz');
 add_action('wp_ajax_nopriv_csq_process_quiz', 'csq_process_quiz');
 
-function csq_save_contact() {
+function csq_save_contact()
+{
     check_ajax_referer('csq_quiz_nonce', 'security');
 
     if (empty($_POST['email'])) {
         wp_send_json_error('Email required', 400);
     }
 
-    $email  = sanitize_email($_POST['email']);
+    $email = sanitize_email($_POST['email']);
     $gender = sanitize_text_field($_POST['gender'] ?? '');
     $fullname = sanitize_text_field($_POST['fullname'] ?? '');
     $ip_address = $_SERVER['REMOTE_ADDR'];
@@ -238,15 +245,15 @@ function csq_save_contact() {
         ], ['id' => $session_id]);
     } else {
         $insert = $wpdb->insert($table, [
-            'user_email'    => $email,
-            'gender'        => $gender,
-            'fullname'      => $fullname,
-            'responses'     => maybe_serialize([]),
+            'user_email' => $email,
+            'gender' => $gender,
+            'fullname' => $fullname,
+            'responses' => maybe_serialize([]),
             'product_votes' => maybe_serialize([]),
             'final_product' => '',
-            'created_at'    => current_time('mysql'),
-            'ip_address'    => $ip_address,
-            'user_agent'    => $user_agent
+            'created_at' => current_time('mysql'),
+            'ip_address' => $ip_address,
+            'user_agent' => $user_agent
         ]);
 
         if (!$insert) {
@@ -256,10 +263,11 @@ function csq_save_contact() {
         $session_id = $wpdb->insert_id;
     }
 
-    wp_send_json_success(['session_id' => (int)$session_id]);
+    wp_send_json_success(['session_id' => (int) $session_id]);
 }
 
-function csq_email_results() {
+function csq_email_results()
+{
     check_ajax_referer('csq_quiz_nonce', 'security');
 
     $session_id = isset($_POST['session_id']) ? absint($_POST['session_id']) : 0;
@@ -267,6 +275,11 @@ function csq_email_results() {
 
     if (!$session_id || !$email) {
         wp_send_json_error('Invalid request');
+    }
+
+    // Enhanced email validation
+    if (!is_email($email)) {
+        wp_send_json_error('Invalid email format');
     }
 
     global $wpdb;
@@ -282,34 +295,38 @@ function csq_email_results() {
     $products = explode(',', $response->final_product);
     $subject = 'Your Skincare Recommendations';
 
-    ob_start();
-    ?>
-    <html>
-    <body>
-        <h2>Your Personalized Skincare Recommendations</h2>
-        <p>Hello <?php echo esc_html($response->fullname); ?>,</p>
-        <p>Based on your skin analysis, we recommend these products:</p>
-        <ul>
-            <?php foreach ($products as $product): ?>
-                <li><?php echo esc_html($product); ?></li>
-            <?php endforeach; ?>
-        </ul>
-        <p>Thank you for using our skin analysis system!</p>
-    </body>
-    </html>
-    <?php
-    $message = ob_get_clean();
+    // Build HTML email content
+    $message = '<html><body>';
+    $message .= '<h2>Your Personalized Skincare Recommendations</h2>';
+    $message .= '<p>Hello ' . esc_html($response->fullname) . ',</p>';
+    $message .= '<p>Based on your skin analysis, we recommend these products:</p>';
+    $message .= '<ul>';
 
-    $headers = array('Content-Type: text/html; charset=UTF-8');
+    foreach ($products as $product) {
+        $message .= '<li>' . esc_html($product) . '</li>';
+    }
 
+    $message .= '</ul>';
+    $message .= '<p>Thank you for using our skin analysis system!</p>';
+    $message .= '</body></html>';
+
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: ' . get_bloginfo('name') . ' <' . get_bloginfo('admin_email') . '>'
+    );
+
+    // Use wp_mail() with proper content type and headers
     if (wp_mail($email, $subject, $message, $headers)) {
         wp_send_json_success();
     } else {
-        wp_send_json_error('Failed to send email');
+        // Log error for debugging
+        error_log('Email send failed for session: ' . $session_id);
+        wp_send_json_error('Failed to send email. Please try again later.');
     }
 }
 
-function csq_process_quiz() {
+function csq_process_quiz()
+{
     check_ajax_referer('csq_quiz_nonce', 'security');
     global $wpdb;
 
@@ -336,12 +353,12 @@ function csq_process_quiz() {
 
     // Calculate recommendations
     $results = csq_calculate_results($answers);
-    $names   = isset($results['products']) ? wp_list_pluck($results['products'], 'name') : [];
-    $final   = implode(', ', $names);
+    $names = isset($results['products']) ? wp_list_pluck($results['products'], 'name') : [];
+    $final = implode(', ', $names);
 
     // Prepare DB update
     $data = [
-        'responses'     => maybe_serialize($answers),
+        'responses' => maybe_serialize($answers),
         'product_votes' => maybe_serialize($results['total_votes'] ?? []),
         'final_product' => $final,
     ];
@@ -370,10 +387,18 @@ function csq_process_quiz() {
         ? "Hello {$response->fullname},\n\nBased on your answers, we recommend these products:\n\n" . implode("\n", $names)
         : "Hello {$response->fullname},\n\nIt looks like you didn't complete the quiz. Click here to finish it: " . site_url('/your-quiz-page');
 
-    wp_mail($response->user_email, $subject, $message);
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: ' . get_bloginfo('name') . ' <' . get_bloginfo('admin_email') . '>'
+    );
+
+    // Send email
+    if (is_email($response->user_email)) {
+        wp_mail($response->user_email, $subject, $message, $headers);
+    }
 
     wp_send_json_success([
-        'products'   => $results['products'] ?? [],
+        'products' => $results['products'] ?? [],
         'session_id' => $session_id
     ]);
 }
@@ -386,7 +411,8 @@ function csq_process_quiz() {
 add_action('wp_enqueue_scripts', 'csq_enqueue_assets');
 add_action('admin_enqueue_scripts', 'csq_admin_assets');
 
-function csq_enqueue_assets() {
+function csq_enqueue_assets()
+{
     wp_register_style(
         'csq-frontend',
         CSQ_PLUGIN_URL . 'assets/css/frontend.css',
@@ -403,31 +429,32 @@ function csq_enqueue_assets() {
     );
 
     $questions = csq_get_questions();
-    $question_count = count( $questions );
+    $question_count = count($questions);
 
     wp_localize_script('csq-frontend', 'csqData', [
         'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce'   => wp_create_nonce('csq_quiz_nonce'),
-        'assets'  => CSQ_PLUGIN_URL . 'assets/',
-         'questionCount' => $question_count,
+        'nonce' => wp_create_nonce('csq_quiz_nonce'),
+        'assets' => CSQ_PLUGIN_URL . 'assets/',
+        'questionCount' => $question_count,
     ]);
 }
 
-function csq_admin_assets() {
+function csq_admin_assets()
+{
     // only run on our plugin pages
-    if ( empty( $_GET['page'] ) || strpos( $_GET['page'], 'csq-' ) !== 0 ) {
+    if (empty($_GET['page']) || strpos($_GET['page'], 'csq-') !== 0) {
         return;
     }
 
     // DataTables + Select2 are needed everywhere
-    wp_enqueue_style(  'datatables', 'https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css' );
-    wp_enqueue_script( 'datatables', 'https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js', ['jquery'], '1.13.6', true );
-    wp_enqueue_style(  'select2',    'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css' );
-    wp_enqueue_script( 'select2',    'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', ['jquery'], null, true );
+    wp_enqueue_style('datatables', 'https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css');
+    wp_enqueue_script('datatables', 'https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js', ['jquery'], '1.13.6', true);
+    wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
+    wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', ['jquery'], null, true);
 
     // Chart.js only on the responses page
-    $deps = ['jquery','select2','datatables'];
-    if ( $_GET['page'] === 'csq-responses' ) {
+    $deps = ['jquery', 'select2', 'datatables'];
+    if ($_GET['page'] === 'csq-responses') {
         wp_enqueue_script(
             'chart-js',
             'https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js',
@@ -443,13 +470,13 @@ function csq_admin_assets() {
         'csq-admin',
         CSQ_PLUGIN_URL . 'assets/css/admin.css',
         [],
-        filemtime( CSQ_PLUGIN_PATH . 'assets/css/admin.css' )
+        filemtime(CSQ_PLUGIN_PATH . 'assets/css/admin.css')
     );
     wp_enqueue_script(
         'csq-admin',
         CSQ_PLUGIN_URL . 'assets/js/admin.js',
         $deps,
-        filemtime( CSQ_PLUGIN_PATH . 'assets/js/admin.js' ),
+        filemtime(CSQ_PLUGIN_PATH . 'assets/js/admin.js'),
         true
     );
 }
@@ -457,17 +484,20 @@ function csq_admin_assets() {
 // =============================================================================
 // CORE FUNCTIONS
 // =============================================================================
-function csq_get_products() {
+function csq_get_products()
+{
     global $wpdb;
     return $wpdb->get_results("SELECT * FROM {$wpdb->prefix}skin_products ORDER BY product_order ASC");
 }
 
-function csq_get_questions() {
+function csq_get_questions()
+{
     global $wpdb;
     return $wpdb->get_results("SELECT * FROM {$wpdb->prefix}quiz_questions ORDER BY question_order ASC");
 }
 
-function csq_get_answers() {
+function csq_get_answers()
+{
     global $wpdb;
     $rows = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}quiz_answers ORDER BY answer_order ASC");
     $answers = [];
@@ -480,7 +510,8 @@ function csq_get_answers() {
     return $answers;
 }
 
-function csq_calculate_results($answer_ids) {
+function csq_calculate_results($answer_ids)
+{
     global $wpdb;
     $product_votes = [];
     $product_cache = [];
@@ -527,7 +558,7 @@ function csq_calculate_results($answer_ids) {
         }
     }
 
-    usort($qualified, function($a, $b) {
+    usort($qualified, function ($a, $b) {
         return $b['votes'] - $a['votes'] ?: $a['product_order'] - $b['product_order'];
     });
 
