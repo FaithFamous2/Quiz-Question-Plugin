@@ -5,6 +5,13 @@ jQuery(document).ready(function($) {
         placeholder: 'Select products...',
         allowClear: true
     });
+    $('.select2-tags').select2({
+        placeholder: $(this).data('placeholder'),
+        tags: true,
+        allowClear: true,
+        tokenSeparators: [',', ' '],
+        width: '100%',
+      });
 
     // Initialize DataTables
     $('.csq-table').DataTable({

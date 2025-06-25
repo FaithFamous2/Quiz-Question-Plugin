@@ -86,6 +86,7 @@ function csq_create_database() {
             product_votes TEXT NOT NULL,
             final_product VARCHAR(255),
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             ip_address VARCHAR(45) DEFAULT '',
             user_agent TEXT DEFAULT '',
             PRIMARY KEY (id)
@@ -107,6 +108,11 @@ function csq_create_database() {
 
             if (!in_array('user_agent', $columns)) {
                 $wpdb->query("ALTER TABLE $table_name ADD user_agent TEXT DEFAULT ''");
+            }
+                        // In csq_create_database() after table check
+            if (!in_array('updated_at', $columns)) {
+                $wpdb->query("ALTER TABLE $table_name
+                    ADD updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
             }
         }
     }
@@ -218,7 +224,8 @@ function csq_save_contact() {
             'gender' => $gender,
             'fullname' => $fullname,
             'ip_address' => $ip_address,
-            'user_agent' => $user_agent
+            'user_agent' => $user_agent,
+            'created_at' => current_time('mysql')
         ], ['id' => $session_id]);
     } else {
         $insert = $wpdb->insert($table, [
