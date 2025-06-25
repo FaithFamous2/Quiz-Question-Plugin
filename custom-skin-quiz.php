@@ -87,9 +87,21 @@ function csq_create_database() {
             final_product VARCHAR(255),
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            attempt_count INT DEFAULT 1,
             ip_address VARCHAR(45) DEFAULT '',
             user_agent TEXT DEFAULT '',
             PRIMARY KEY (id)
+        ) $charset_collate",
+
+        // Add history table
+        "{$table_prefix}quiz_history" => "(
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            response_id BIGINT UNSIGNED NOT NULL,
+            answers TEXT NOT NULL,
+            products TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            FOREIGN KEY (response_id) REFERENCES {$table_prefix}quiz_responses(id) ON DELETE CASCADE
         ) $charset_collate"
     ];
 
@@ -114,6 +126,11 @@ function csq_create_database() {
                 $wpdb->query("ALTER TABLE $table_name
                     ADD updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
             }
+
+            if (!in_array('attempt_count', $columns)) {
+                $wpdb->query("ALTER TABLE $table_name
+                    ADD attempt_count INT DEFAULT 1");
+            }
         }
     }
 
@@ -124,21 +141,7 @@ function csq_create_database() {
 // =============================================================================
 // ADMIN INTERFACE
 // =============================================================================
-function csq_dashboard_page() {
-    ?>
-    <div class="wrap csq-admin">
-        <h1 class="csq-admin-title">Skin Care Quiz Dashboard</h1>
-        <div class="card csq-card">
-            <p>Welcome to the Skin Care Quiz plugin! Use the navigation menu to manage:</p>
-            <ul>
-                <li>📦 Products - Add and manage skincare products</li>
-                <li>❓ Questions - Create quiz questions and answers</li>
-                <li>📊 Responses - View user quiz results</li>
-            </ul>
-        </div>
-    </div>
-    <?php
-}
+
 
 function csq_admin_menu() {
     add_menu_page(
@@ -155,6 +158,7 @@ function csq_admin_menu() {
     add_submenu_page('csq-dashboard', 'Questions', 'Questions', 'manage_options', 'csq-questions', 'csq_questions_page');
     add_submenu_page('csq-dashboard', 'Responses', 'Responses', 'manage_options', 'csq-responses', 'csq_responses_page');
     add_submenu_page(null, 'Answers', 'Answers', 'manage_options', 'csq-answers', 'csq_answers_page');
+    add_submenu_page(null, 'User History', 'User History', 'manage_options', 'csq-history', 'csq_history_page');
 }
 add_action('admin_menu', 'csq_admin_menu');
 
@@ -163,6 +167,8 @@ require_once CSQ_PLUGIN_PATH . 'admin/products.php';
 require_once CSQ_PLUGIN_PATH . 'admin/questions.php';
 require_once CSQ_PLUGIN_PATH . 'admin/answers.php';
 require_once CSQ_PLUGIN_PATH . 'admin/responses.php';
+require_once CSQ_PLUGIN_PATH . 'admin/history.php';
+require_once CSQ_PLUGIN_PATH . 'admin/dashboard.php';
 
 // =============================================================================
 // FRONTEND QUIZ
@@ -214,18 +220,20 @@ function csq_save_contact() {
 
     // Check if session already exists
     $existing = $wpdb->get_row($wpdb->prepare(
-        "SELECT id FROM $table WHERE user_email = %s",
+        "SELECT id, attempt_count FROM $table WHERE user_email = %s",
         $email
     ));
 
     if ($existing) {
         $session_id = $existing->id;
+        $new_attempt = $existing->attempt_count + 1;
         $wpdb->update($table, [
             'gender' => $gender,
             'fullname' => $fullname,
             'ip_address' => $ip_address,
             'user_agent' => $user_agent,
-            'created_at' => current_time('mysql')
+            'created_at' => current_time('mysql'),
+            'attempt_count' => $new_attempt
         ], ['id' => $session_id]);
     } else {
         $insert = $wpdb->insert($table, [
@@ -336,6 +344,14 @@ function csq_process_quiz() {
         'product_votes' => maybe_serialize($results['total_votes'] ?? []),
         'final_product' => $final,
     ];
+
+    $history_data = [
+        'response_id' => $session_id,
+        'answers' => maybe_serialize($answers),
+        'products' => $final
+    ];
+
+    $wpdb->insert($wpdb->prefix . 'quiz_history', $history_data);
 
     $updated = $wpdb->update($wpdb->prefix . 'quiz_responses', $data, ['id' => $session_id]);
 

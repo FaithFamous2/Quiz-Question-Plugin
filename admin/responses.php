@@ -218,6 +218,7 @@ function csq_responses_page() {
                         <th>Gender</th>
                         <th>Name</th>
                         <th>Recommended Products</th>
+                        <th>Attempts</th>
                         <th>Date</th>
                         <th>Actions</th>
                     </tr>
@@ -244,6 +245,13 @@ function csq_responses_page() {
                                 <?php else: ?>
                                     <span class="text-muted">No products matched</span>
                                 <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php echo (int)$response->attempt_count; ?>
+                                <a href="<?php echo admin_url('admin.php?page=csq-history&email=' . urlencode($response->user_email)); ?>"
+                                class="button button-small">
+                                    View History
+                                </a>
                             </td>
                             <td><?php echo date('M j, Y H:i', strtotime($response->created_at)); ?></td>
                             <td>
@@ -294,6 +302,7 @@ function csq_responses_page() {
         function handleViewDetails() {
             const responseData = $(this).data('response');
             const modalContent = $('#responseDetailsContent');
+            const adminUrl = '<?php echo admin_url(); ?>'; // ADDED THIS LINE
 
             // Clear previous content
             modalContent.html('');
@@ -380,6 +389,14 @@ function csq_responses_page() {
             } else {
                 html += '<p class="csq-no-data">No product votes recorded</p>';
             }
+            html += '</div>';
+
+            // ADDED: Quiz History Section
+            html += '<div class="csq-detail-section">';
+            html += '<h4>Quiz History</h4>';
+            html += '<a href="' + adminUrl + 'admin.php?page=csq-history&email=' + encodeURIComponent(safeData.email) + '" class="button">';
+            html += 'View All Attempts';
+            html += '</a>';
             html += '</div>';
 
             html += '</div>'; // Close response-details
@@ -779,6 +796,21 @@ function csq_responses_page() {
         .response-details .csq-detail-grid {
             grid-template-columns: 1fr;
         }
+    }
+
+    .csq-detail-section .button {
+        display: inline-block;
+        padding: 8px 16px;
+        background: #4361ee;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+    }
+
+    .csq-detail-section .button:hover {
+        background: #3a0ca3;
     }
     </style>
     <?php
