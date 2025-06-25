@@ -389,42 +389,43 @@ function csq_enqueue_assets() {
     ]);
 }
 
-function csq_admin_assets($hook) {
-    // Only load on our plugin pages
-    if (strpos($hook, 'csq-') === false && $hook !== 'toplevel_page_csq-responses') {
+function csq_admin_assets() {
+    // only run on our plugin pages
+    if ( empty( $_GET['page'] ) || strpos( $_GET['page'], 'csq-' ) !== 0 ) {
         return;
     }
 
-    // Load Chart.js only on responses page
-    if ($hook === 'toplevel_page_csq-responses') {
+    // DataTables + Select2 are needed everywhere
+    wp_enqueue_style(  'datatables', 'https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css' );
+    wp_enqueue_script( 'datatables', 'https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js', ['jquery'], '1.13.6', true );
+    wp_enqueue_style(  'select2',    'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css' );
+    wp_enqueue_script( 'select2',    'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', ['jquery'], null, true );
+
+    // Chart.js only on the responses page
+    $deps = ['jquery','select2','datatables'];
+    if ( $_GET['page'] === 'csq-responses' ) {
         wp_enqueue_script(
             'chart-js',
             'https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js',
-            array(),
+            [],
             '3.7.0',
             true
         );
+        $deps[] = 'chart-js';
     }
 
-    // Enqueue DataTables for all admin pages
-    wp_enqueue_style('datatables', 'https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css');
-    wp_enqueue_script('datatables', 'https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js', ['jquery'], '1.13.6', true);
-
+    // Finally enqueue our admin.js with the correct dependency list
     wp_enqueue_style(
         'csq-admin',
         CSQ_PLUGIN_URL . 'assets/css/admin.css',
         [],
-        filemtime(CSQ_PLUGIN_PATH . 'assets/css/admin.css')
+        filemtime( CSQ_PLUGIN_PATH . 'assets/css/admin.css' )
     );
-
-    wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
-    wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', ['jquery']);
-
     wp_enqueue_script(
         'csq-admin',
         CSQ_PLUGIN_URL . 'assets/js/admin.js',
-        ['jquery', 'select2', 'datatables'],
-        filemtime(CSQ_PLUGIN_PATH . 'assets/js/admin.js'),
+        $deps,
+        filemtime( CSQ_PLUGIN_PATH . 'assets/js/admin.js' ),
         true
     );
 }
