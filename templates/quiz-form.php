@@ -4,7 +4,7 @@ $answers   = csq_get_answers();
 $total_steps = count($questions) + 2;
 ?>
 
-<div class="csq-skin-analysis-system">
+<div id="csq-skin-quiz-container" class="csq-skin-analysis-system">
   <!-- Hero Section with Animation -->
   <div class="csq-skin-hero">
     <div class="csq-hero-content">

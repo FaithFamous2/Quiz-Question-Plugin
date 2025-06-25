@@ -4,11 +4,12 @@
    @import 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css';
 
    :root {
-     --csq-primary: #2f3e26;
-     --csq-secondary: #c76f3a;
-     --csq-light: #f8f9f2;
-     --csq-dark: #1e2a1a;
-     --csq-accent: #5c7e6e;
+    --csq-primary: #2f3e26 !important;
+    --csq-secondary: #c76f3a !important;
+    --csq-light: #f8f9f2 !important;
+    --csq-dark: #1e2a1a !important;
+    --csq-accent: #5c7e6e !important;
+    box-sizing: border-box !important;
    }
 
    html, body {
@@ -372,14 +373,23 @@
      color: #a0aec0;
    }
 
-   .csq-form-input {
+   /* .csq-form-input {
      width: 100%;
      padding: 1rem 1rem 1rem 3rem;
      border: 1px solid #e2e8f0;
      border-radius: 12px;
      font-size: 1rem;
      transition: all 0.3s ease;
-   }
+   } */
+
+   .csq-form-input {
+    width: 100% !important;
+    padding: 1rem 1rem 1rem 3rem !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+}
 
    .csq-form-input:focus {
      border-color: var(--csq-secondary);
